@@ -1,37 +1,34 @@
 import pickle
-from flask import Flask, jsonify, request
+from flask import Flask, request, jsonify
 
-with open("./lin_reg.bin", "rb") as f_in:
-    (dv, model) = pickle.load(f_in)
-    
-    
-def prepare_features(ride):
-    features = {}
-    features['PU_DO'] = '%s_%s' % (ride['PULocationID'], ride['DOLocationID'])
-    features['trip_distance'] = ride['trip_distance']
-    return features
+with open("models/lin_reg.bin", "rb") as fp:
+    (dv, model) = pickle.load(fp)
 
-def predict(features):
-    X = dv.transform(features)
-    preds = model.predict(X)
-    return preds[0]
 
-app = Flask('duration-prediction')
+def prepare_features(ride:dict):
+    features_dict = {}
+    features_dict['PU_DO'] = f"{ride.get('PULocationID', '')}_{ride.get('DOLocationID', '')}"
+    features_dict['trip_distance'] = ride['trip_distance']
+    return features_dict
+        
+def predict(features: dict):
+    sparse_ride = dv.transform(features)
+    duration = model.predict(sparse_ride)
+    return duration
 
-@app.route('/predict', methods=['POST'])
+app = Flask("ride-duration-prediction-service")
+
+@app.route("/predict", methods=['POST'])
 def predict_endpoint():
     ride = request.get_json()
-    
     features = prepare_features(ride)
-    prediction = predict(features)
-    
-    result = {
-        'duration': prediction
+    duration = predict(features)
+    response = {
+        'duration': duration[0]
     }
-    return jsonify(result)
+    return jsonify(response)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host = "0.0.0.0", port=9696)
-    
+    app.run(debug=True, host='0.0.0.0', port=9696)
     

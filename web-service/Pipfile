@@ -5,13 +5,19 @@ name = "pypi"
 
 [packages]
 scikit-learn = "==1.6.1"
-gunicorn = "*"
-requests = "*"
 flask = "*"
+requests = "*"
+pyarrow = "*"
+gunicorn = "*"
 
 [dev-packages]
 requests = "*"
 awsebcli = "*"
+pandas = "*"
+seaborn = "*"
+matplotlib = "*"
+pyarrow = "*"
+fastparquet = "*"
 
 [requires]
 python_version = "3.12"

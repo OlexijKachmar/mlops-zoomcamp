@@ -1,20 +1,13 @@
-# import predict
-
-ride = {
-    "PULocationID": 10,
-    "DOLocationID": 50,
-    "trip_distance": 40  
-}
-
-# features = predict.prepare_features(ride)
-# prediction = predict.predict(features)
-# print(prediction)
-
+import predict
 import requests
 
-url = "http://localhost:9696/predict"
-response = requests.post(
-    url, json=ride
-)
+ride = {
+    "PULocationID":1,
+    "DOLocationID":2,
+    "trip_distance": 10
+}
 
+# print("Duration: ", duration)
+url = "http://localhost:9696/predict"
+response = requests.post(url, json=ride)
 print(response.json())
